@@ -1,5 +1,5 @@
 # BlockMesh AutoBot
-Automation Script for BlockMesh Network | Using proxies
+Automation farming Script for BlockMesh Network and just using proxies
 ### Tools and components required
 1. Nodepay Account| Register: [https://app.blockmesh.xyz/register](https://app.blockmesh.xyz/register?invite_code=officialblockmesh)
 2. Proxies Static Residental | [FREE 10 PREMIUM PROXIES](https://www.webshare.io/?referral_code=p7k7whpdu2jg)
