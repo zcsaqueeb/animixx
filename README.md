@@ -13,11 +13,11 @@ apt install python3 python3-pip -y
 ```
 - Install requirements, Windows:
 ```bash
-pip install requests
+pip install requests colorama
 ```
 - Unix:
 ```bash
-pip3 install requests
+pip3 install requests colorama
 ```
 ### Run the Bot
 - Replace the proxies example in ```proxies.txt``` to your own proxies
