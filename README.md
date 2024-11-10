@@ -42,4 +42,5 @@ If the following log appears, it means it is running successfully.
 ```
 # Notes
 - Run this bot, and it will update your referrer code to my invite code if you don't have one.
+- This bot have delay every 5 minutes for sending uptime report to Blackmesh Network server.
 - You can just run this bot at your own risk, I'm not responsible for any loss or damage caused by this bot. This bot is for educational purposes only.
