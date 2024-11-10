@@ -17,6 +17,8 @@ def print_banner():
 """
     print(banner)
 
+proxy_tokens = {}
+
 print_banner()
 print(f"{Fore.YELLOW}Please Login to your Blockmesh Account first.{Style.RESET_ALL}\n")
 email_input = input(f"{Fore.LIGHTBLUE_EX}Enter Email: {Style.RESET_ALL}")
@@ -71,14 +73,22 @@ def format_proxy(proxy_string):
 
 def authenticate(proxy):
     proxy_config, ip_address = format_proxy(proxy)
+    
+    if proxy in proxy_tokens:
+        return proxy_tokens[proxy], ip_address
+        
     login_data = {"email": email_input, "password": password_input}
     
     try:
         response = requests.post(login_endpoint, json=login_data, headers=login_headers, proxies=proxy_config)
         response.raise_for_status()
         auth_data = response.json()
-        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.GREEN} Login successful {Fore.MAGENTA}|{Fore.LIGHTYELLOW_EX} {ip_address}{Style.RESET_ALL}")
-        return auth_data.get("api_token"), ip_address
+        api_token = auth_data.get("api_token")
+        
+        proxy_tokens[proxy] = api_token
+        
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.GREEN} Login successful {Fore.MAGENTA}|{Fore.LIGHTYELLOW_EX} {ip_address} {Fore.MAGENTA}| {Fore.LIGHTWHITE_EX}{api_token}{Style.RESET_ALL}")
+        return api_token, ip_address
     except requests.RequestException as err:
         print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.RED} Login failed {Fore.MAGENTA}|{Fore.LIGHTYELLOW_EX} {ip_address}: {err}{Style.RESET_ALL}")
         return None, None
@@ -90,13 +100,22 @@ def send_uptime_report(api_token, ip_addr, proxy):
     try:
         response = requests.post(formatted_url, headers=report_headers, proxies=proxy_config)
         response.raise_for_status()
-        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.LIGHTGREEN_EX} PING successfull {Fore.MAGENTA}|{Fore.LIGHTYELLOW_EX} {ip_addr}{Style.RESET_ALL}")
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.LIGHTGREEN_EX} PING successfull {Fore.MAGENTA}|{Fore.LIGHTYELLOW_EX} {ip_addr} {Fore.MAGENTA}| {Fore.LIGHTWHITE_EX}{api_token}{Style.RESET_ALL}")
     except requests.RequestException as err:
+        if proxy in proxy_tokens:
+            del proxy_tokens[proxy]
         print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.RED} Failed to PING {Fore.MAGENTA}|{Fore.LIGHTYELLOW_EX} {ip_addr}: {err}{Style.RESET_ALL}")
 
 def process_proxy(proxy):
+    first_run = True
     while True:
-        api_token, ip_address = authenticate(proxy)
+        if first_run or proxy not in proxy_tokens:
+            api_token, ip_address = authenticate(proxy)
+            first_run = False
+        else:
+            api_token = proxy_tokens[proxy]
+            _, ip_address = format_proxy(proxy)
+            
         if api_token:
             #print(f"{Fore.CYAN}[{datetime.now().strftime('%H:%M:%S')}] Delay 5 minutes before send PING | {ip_address}...")
             time.sleep(300)
