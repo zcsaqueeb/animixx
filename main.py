@@ -100,7 +100,7 @@ def send_uptime_report(api_token, ip_addr, proxy):
     try:
         response = requests.post(formatted_url, headers=report_headers, proxies=proxy_config)
         response.raise_for_status()
-        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.LIGHTGREEN_EX} PING successfull {Fore.MAGENTA}|{Fore.LIGHTYELLOW_EX} {ip_addr} {Fore.MAGENTA}| {Fore.LIGHTWHITE_EX}{api_token}{Style.RESET_ALL}")
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.LIGHTGREEN_EX} PING successfull {Fore.MAGENTA}|{Fore.LIGHTYELLOW_EX} {ip_addr} {Fore.MAGENTA}| {Fore.LIGHTWHITE_EX}{api_token} {Fore.MAGENTA}|{Fore.BLUE} Delay 5 minutes for next PING!{Style.RESET_ALL}")
     except requests.RequestException as err:
         if proxy in proxy_tokens:
             del proxy_tokens[proxy]
