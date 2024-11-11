@@ -1,7 +1,7 @@
 # BlockMesh AutoBot
 Automation farming Script for BlockMesh Network and just using proxies
 ### Tools and components required
-1. Nodepay Account| Register: [https://app.blockmesh.xyz/register](https://app.blockmesh.xyz/register?invite_code=officialblockmesh)
+1. BlockMesh Account | Register: [https://app.blockmesh.xyz/register](https://app.blockmesh.xyz/register?invite_code=officialblockmesh)
 2. Proxies Static Residental | [FREE 10 PREMIUM PROXIES](https://www.webshare.io/?referral_code=p7k7whpdu2jg)
 3. VPS or RDP (OPTIONAL)
 4. Python version 3.10
