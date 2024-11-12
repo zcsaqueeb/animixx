@@ -251,7 +251,7 @@ def process_proxy(proxy):
             time.sleep(2)
             send_uptime_report(api_token, ip_address, proxy)
             
-            time.sleep(1800)
+            time.sleep(900)
             
         time.sleep(2)
 
