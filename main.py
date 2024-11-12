@@ -244,10 +244,10 @@ def process_proxy(proxy):
             ip_info = get_ip_info(ip_address)
             
             #connect_websocket(email_input, api_token)
-            #time.sleep(random.randint(5, 20))
+            time.sleep(random.randint(60, 120))
             
             submit_bandwidth(email_input, api_token, ip_info, proxy_config)
-            time.sleep(random.randint(5, 20))
+            time.sleep(random.randint(60, 120))
             
             get_and_submit_task(email_input, api_token, ip_info, proxy_config)
             time.sleep(random.randint(60, 120))
