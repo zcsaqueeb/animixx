@@ -107,6 +107,7 @@ def get_and_submit_task(email, api_token, ip_info, proxy_config):
             
         task_id = task_data["id"]
         print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.GREEN} Got task: {task_id}")
+        time.sleep(random.randint(60, 120))
         
         submit_url = f"https://app.blockmesh.xyz/api/submit_task"
         params = {
@@ -242,8 +243,8 @@ def process_proxy(proxy):
             proxy_config, _ = format_proxy(proxy)
             ip_info = get_ip_info(ip_address)
             
-            connect_websocket(email_input, api_token)
-            time.sleep(random.randint(5, 20))
+            #connect_websocket(email_input, api_token)
+            #time.sleep(random.randint(5, 20))
             
             submit_bandwidth(email_input, api_token, ip_info, proxy_config)
             time.sleep(random.randint(5, 20))
