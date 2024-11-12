@@ -22,13 +22,13 @@ def print_banner():
 proxy_tokens = {}
 
 def generate_download_speed():
-    return round(random.uniform(0.0, 5.0), 16)
+    return round(random.uniform(0.0, 10.0), 16)
 
 def generate_upload_speed():
-    return round(random.uniform(0.0, 2.0), 16)
+    return round(random.uniform(0.0, 5.0), 16)
 
 def generate_latency():
-    return round(random.uniform(30.0, 1000.0), 16)
+    return round(random.uniform(20.0, 300.0), 16)
 
 def generate_response_time():
     return round(random.uniform(200.0, 600.0), 1)
@@ -243,17 +243,18 @@ def process_proxy(proxy):
             ip_info = get_ip_info(ip_address)
             
             connect_websocket(email_input, api_token)
+            time.sleep(random.randint(5, 20))
             
             submit_bandwidth(email_input, api_token, ip_info, proxy_config)
+            time.sleep(random.randint(5, 20))
             
             get_and_submit_task(email_input, api_token, ip_info, proxy_config)
+            time.sleep(random.randint(60, 120))
             
-            time.sleep(2)
             send_uptime_report(api_token, ip_address, proxy)
-            
-            time.sleep(900)
-            
-        time.sleep(2)
+            time.sleep(random.randint(900, 1200))
+        
+        time.sleep(10)
 
 def main():
     print(f"\n{Style.BRIGHT}Starting ...")
@@ -265,7 +266,7 @@ def main():
         thread.start()
         time.sleep(1)
     
-    print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.LIGHTCYAN_EX}[✓] DONE! Delay 30 minutes before send PING for all proxies. Not Stuck! Just wait and relax...{Style.RESET_ALL}")
+    print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.LIGHTCYAN_EX}[✓] DONE! Delay before next cycle. Not Stuck! Just wait and relax...{Style.RESET_ALL}")
     
     try:
         while True:
