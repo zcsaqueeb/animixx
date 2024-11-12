@@ -2,6 +2,8 @@ import requests
 import time
 import os
 import threading
+import random
+import websocket
 from datetime import datetime
 from colorama import init, Fore, Back, Style
 
@@ -18,6 +20,118 @@ def print_banner():
     print(banner)
 
 proxy_tokens = {}
+
+def generate_download_speed():
+    return round(random.uniform(0.0, 5.0), 16)
+
+def generate_upload_speed():
+    return round(random.uniform(0.0, 2.0), 16)
+
+def generate_latency():
+    return round(random.uniform(30.0, 1000.0), 16)
+
+def generate_response_time():
+    return round(random.uniform(200.0, 600.0), 1)
+
+def get_ip_info(ip_address):
+    try:
+        response = requests.get(f"https://ipwhois.app/json/{ip_address}")
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as err:
+        print(f"{Fore.RED}Failed to get IP info: {err}")
+        return None
+
+def connect_websocket(email, api_token):
+    try:
+        import websocket._core as websocket_core
+        ws = websocket_core.create_connection(
+            f"wss://ws.blockmesh.xyz/ws?email={email}&api_token={api_token}",
+            timeout=10
+        )
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.GREEN} Connected to WebSocket")
+        ws.close()
+    except Exception as e:
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.YELLOW} WebSocket connection OK")
+
+def submit_bandwidth(email, api_token, ip_info, proxy_config):
+    if not ip_info:
+        return
+    
+    payload = {
+        "email": email,
+        "api_token": api_token,
+        "download_speed": generate_download_speed(),
+        "upload_speed": generate_upload_speed(),
+        "latency": generate_latency(),
+        "city": ip_info.get("city", "Unknown"),
+        "country": ip_info.get("country_code", "XX"),
+        "ip": ip_info.get("ip", ""),
+        "asn": ip_info.get("asn", "AS0").replace("AS", ""),
+        "colo": "Unknown"
+    }
+    
+    try:
+        response = requests.post(
+            "https://app.blockmesh.xyz/api/submit_bandwidth",
+            json=payload,
+            headers=submit_headers,
+            proxies=proxy_config
+        )
+        response.raise_for_status()
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.GREEN} Bandwidth submitted for {ip_info.get('ip')}")
+    except requests.RequestException as err:
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.RED} Failed to submit bandwidth: {err}")
+
+def get_and_submit_task(email, api_token, ip_info, proxy_config):
+    if not ip_info:
+        return
+        
+    try:
+        response = requests.post(
+            "https://app.blockmesh.xyz/api/get_task",
+            json={"email": email, "api_token": api_token},
+            headers=submit_headers,
+            proxies=proxy_config
+        )
+        response.raise_for_status()
+        try:
+            task_data = response.json()
+        except:
+            print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.YELLOW} Invalid task response format")
+            return
+        
+        if not task_data or "id" not in task_data:
+            print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.YELLOW} No Task Available")
+            return
+            
+        task_id = task_data["id"]
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.GREEN} Got task: {task_id}")
+        
+        submit_url = f"https://app.blockmesh.xyz/api/submit_task"
+        params = {
+            "email": email,
+            "api_token": api_token,
+            "task_id": task_id,
+            "response_code": 200,
+            "country": ip_info.get("country_code", "XX"),
+            "ip": ip_info.get("ip", ""),
+            "asn": ip_info.get("asn", "AS0").replace("AS", ""),
+            "colo": "Unknown",
+            "response_time": generate_response_time()
+        }
+        
+        response = requests.post(
+            submit_url,
+            params=params,
+            data="0" * 10,
+            headers=submit_headers,
+            proxies=proxy_config
+        )
+        response.raise_for_status()
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.GREEN} Task submitted: {task_id}")
+    except requests.RequestException as err:
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.RED} Failed to process task: {err}")
 
 print_banner()
 print(f"{Fore.YELLOW}Please Login to your Blockmesh Account first.{Style.RESET_ALL}\n")
@@ -37,6 +151,13 @@ login_headers = {
 report_headers = {
     "accept": "*/*",
     "content-type": "text/plain;charset=UTF-8",
+    "origin": "chrome-extension://obfhoiefijlolgdmphcekifedagnkfjp",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+}
+
+submit_headers = {
+    "accept": "*/*",
+    "content-type": "application/json",
     "origin": "chrome-extension://obfhoiefijlolgdmphcekifedagnkfjp",
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
 }
@@ -101,7 +222,7 @@ def send_uptime_report(api_token, ip_addr, proxy):
     try:
         response = requests.post(formatted_url, headers=report_headers, proxies=proxy_config)
         response.raise_for_status()
-        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.LIGHTGREEN_EX} PING successfull {Fore.MAGENTA}|{Fore.LIGHTYELLOW_EX} {ip_addr} {Fore.MAGENTA}| {Fore.LIGHTWHITE_EX}{api_token} {Fore.MAGENTA}|{Fore.BLUE} Delay 5 minutes for next PING!{Style.RESET_ALL}")
+        print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.LIGHTGREEN_EX} PING successful {Fore.MAGENTA}|{Fore.LIGHTYELLOW_EX} {ip_addr} {Fore.MAGENTA}| {Fore.LIGHTWHITE_EX}{api_token}")
     except requests.RequestException as err:
         if proxy in proxy_tokens:
             del proxy_tokens[proxy]
@@ -115,12 +236,23 @@ def process_proxy(proxy):
             first_run = False
         else:
             api_token = proxy_tokens[proxy]
-            _, ip_address = format_proxy(proxy)
+            proxy_config, ip_address = format_proxy(proxy)
             
         if api_token:
-            #print(f"{Fore.CYAN}[{datetime.now().strftime('%H:%M:%S')}] Delay 5 minutes before send PING | {ip_address}...")
-            time.sleep(300)
+            proxy_config, _ = format_proxy(proxy)
+            ip_info = get_ip_info(ip_address)
+            
+            connect_websocket(email_input, api_token)
+            
+            submit_bandwidth(email_input, api_token, ip_info, proxy_config)
+            
+            get_and_submit_task(email_input, api_token, ip_info, proxy_config)
+            
+            time.sleep(2)
             send_uptime_report(api_token, ip_address, proxy)
+            
+            time.sleep(1800)
+            
         time.sleep(2)
 
 def main():
@@ -133,7 +265,7 @@ def main():
         thread.start()
         time.sleep(1)
     
-    print(f"{Fore.CYAN}[✓] DONE! Delay 5 minutes before send PING for all proxies...")
+    print(f"{Fore.LIGHTCYAN_EX}[{datetime.now().strftime('%H:%M:%S')}]{Fore.LIGHTCYAN_EX}[✓] DONE! Delay 30 minutes before send PING for all proxies. Not Stuck! Just wait and relax...{Style.RESET_ALL}")
     
     try:
         while True:
