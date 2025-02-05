@@ -1,2 +1,0 @@
-http://localhost:8080
-http://user:pass@localhost:8080
