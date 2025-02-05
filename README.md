@@ -1,112 +1,61 @@
-Here’s an upgraded version of your BlockMesh AutoBot README, with improved clarity, formatting, and more user-friendly instructions.
+Sure thing! Here is the full README content for you to copy:
 
+```markdown
+# Animix Game Bot
 
----
+This is the Animix Game Bot with auto PVP arena functionality and other features. It's built using Node.js and supports both noproxy and proxy configurations.
 
-BlockMesh AutoBot
+## Features
 
-Automatic farming script for BlockMesh Network Extension using proxies
+- Auto PVP arena
+- Existing functions remain unchanged
+- Auto upgrade pet and clone DNA (upcoming feature)
 
-📌 Features
+## Installation
 
-✅ Automates task farming on BlockMesh
-✅ Uses proxies to avoid bans & maximize efficiency
-✅ Tracks and logs earned points
-✅ Sends uptime reports automatically
-✅ Optimized delays to prevent rate-limiting
+### Prerequisites
 
+- Node.js installed on your system.
 
----
+### Steps
 
-📦 Requirements
+1. Clone the repository:
 
-1️⃣ BlockMesh Account – Register Here
-2️⃣ Proxies (Static Residential)
+   ```bash
+   git clone https://github.com/yourusername/animix-game-bot.git
+   cd animix-game-bot
+   ```
 
-Free: Webshare (10 Proxies) | ProxyScrape (100 Proxies)
+2. Install the necessary modules:
 
-Premium (Paid): 922proxy | Proxy-Cheap | Infatica
-3️⃣ VPS or RDP (Optional) for 24/7 automation
-4️⃣ Python 3.10+ – Download Here
+   ```bash
+   npm install
+   ```
 
+3. Configure the `.env` file according to your needs.
 
+4. If you already have `data.txt` for query ID and `proxy.txt` for proxy, you don't need to create them again. Otherwise, create new ones with the following formats:
 
----
+   - `data.txt`: `query_id: user=...` or `query_id=xxx`
+   - `proxy.txt`: `http://user:pass@ip:port`
 
-🔧 Installation
+5. Run the bot:
 
-📌 Windows
+   - Without proxy:
 
-1. Install Python: Download & Install
+     ```bash
+     node animix
+     ```
 
+   - With proxy:
 
-2. Install Dependencies:
+     ```bash
+     node animix-proxy
+     ```
 
-pip install -r requirements.txt
+## Notes
 
+- Some missions might fail due to pet being busy; you can ignore these errors.
+- If you encounter 401, 403, or 503 errors, try changing the query ID.
 
-
-📌 Linux / Termux
-
-1. Install Python & Pip:
-
-apt install python3 python3-pip -y
-
-
-2. Install Dependencies:
-
-pip3 install -r requirements.txt
-
-
-
-
----
-
-🚀 Running the Bot
-
-📌 Setup
-
-Replace the sample proxies in proxies.txt with your own.
-
-Run the bot and enter your BlockMesh credentials.
-
-
-📌 Start the bot
-
-🖥️ Windows
-
-python main.py
-
-🐧 Linux / Termux
-
-python3 main.py
-
-
----
-
-📊 Operating Status
-
-If the bot runs successfully, you should see logs like this:
-
-[23:10:40] Login successful | YOUR-IP
-[23:10:41] PING successful | YOUR-IP
-[23:10:42] Task completed | +100 points
-[23:10:45] Total Points: 1500
-
-
----
-
-⚠️ Notes
-
-The bot automatically updates your referrer code if you don’t have one.
-
-It includes delays to prevent rate limiting by the BlockMesh server.
-
-Use this bot at your own risk. I am not responsible for any losses or bans. This bot is for educational purposes only.
-
-
-
----
-
-🔥 Enjoy farming! Let me know if you need further improvements.
-
+## Community
