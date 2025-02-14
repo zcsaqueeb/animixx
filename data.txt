@@ -1,1 +1,1 @@
-user=%7B%22id%22%3A6721548185%2C%22first_name%22%3A%22Zc%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22zcsaqueeb%22%2C%22language_code%22%3A%22en%22%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FvCx-7_nWrID8iAcs_1b3xQL_MdH5FW8hpsX83qWidpslPvv_w6NdAQQb710-8CiI.svg%22%7D&chat_instance=8165898280420736086&chat_type=channel&auth_date=1739518264&signature=_f6lIHH2Irpdz2mrDmC4ZMACoT71DeQzMJNblsUaZEjIQrjmSII-XI2D73S6dJ6Koxh4ZAVyRaafzbs798GiCg&hash=5692c8deef6cc075057fa38cb313076705848cb4e1ba478dc02287cbd791a658
+
